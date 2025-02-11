@@ -6,25 +6,36 @@ from fastapi import FastAPI, HTTPException
 from server.algos import algos
 from server.data_filter import operations_callback
 
+import logging
+from server.logger import logger
+
 app = FastAPI()
 # app = Flask(__name__)
 #
-# stream_stop_event = threading.Event()
-# stream_thread = threading.Thread(
-#    target=data_stream.run, args=(config.SERVICE_DID, operations_callback, stream_stop_event,)
-# )
-# stream_thread.start()
-#
-#
-# def sigint_handler(*_):
-#    print('Stopping data stream...')
-#    stream_stop_event.set()
-#    sys.exit(0)
-#
-#
-# signal.signal(signal.SIGINT, sigint_handler)
-#
-#
+
+# TODO is threadng the right way to go here?
+
+stream_stop_event = threading.Event()
+stream_thread = threading.Thread(
+    target=data_stream.run,
+    args=(
+        config.SERVICE_DID,
+        operations_callback,
+        stream_stop_event,
+    ),
+)
+stream_thread.start()
+
+
+def sigint_handler(*_):
+    print("Stopping data stream...")
+    stream_stop_event.set()
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, sigint_handler)
+
+
 # @app.route('/')
 # def index():
 #    return 'ATProto Feed Generator powered by The AT Protocol SDK for Python (https://github.com/MarshalX/atproto).'
@@ -144,3 +155,9 @@ async def get_feed_skeleton(
     except ValueError:
         raise HTTPException(status_code=400, detail="Malformed cursor")
     return body
+
+
+if __name__ == "__main__":
+    # FOR DEBUG PURPOSE ONLY
+    logger.setLevel(logging.DEBUG)
+    # app.run(host="127.0.0.1", port=8000, debug=True)
