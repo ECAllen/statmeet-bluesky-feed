@@ -10,11 +10,11 @@ import logging
 from server.logger import logger
 
 app = FastAPI()
+# TODO drop commmented Flask code once FastHTML is tested
 # app = Flask(__name__)
 #
 
 # TODO is threadng the right way to go here?
-
 stream_stop_event = threading.Event()
 stream_thread = threading.Thread(
     target=data_stream.run,
