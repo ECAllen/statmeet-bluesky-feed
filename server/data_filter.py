@@ -67,8 +67,8 @@ def operations_callback(ops: defaultdict) -> None:
         if should_ignore_post(record):
             continue
 
-        # only python-related posts
-        if "python" in record.text.lower():
+        # only not trump related posts
+        if "trump" not in record.text.lower():
             reply_root = reply_parent = None
             if record.reply:
                 reply_root = record.reply.root.uri
